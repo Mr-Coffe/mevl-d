@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAMANIN ÖTESİNDE</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* BASE64 ARKA PLAN GÖRÜNTÜSÜ VE GENEL STİL */
+        body {
+            background-color: #000000;
+            background-image: radial-gradient(circle at center, #2c3e50 0%, #000000 70%);
+            color: #EEEEEE;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Başlıklar */
+        .title {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: 5px;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .subtitle {
+            font-size: 0.8em;
+            color: #AAAAAA;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        /* Saat ve Kalp Yerleşimi */
+        .time-and-hearts {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px; 
+            margin-top: 20px; /* Analog saatin altından biraz boşluk */
+        }
+
+        /* Dijital Saat Stili */
+        #digital-time {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 3.8em;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            line-height: 1; 
+        }
+        
+        /* Kalp Canvas Stili (Saatle aynı boyuta yakın) */
+        .heart-canvas {
+            display: block;
+            width: 150px; /* Analog saatle aynı görsel boyuta getirildi */
+            height: 150px;
+            margin: 0;
+            padding: 0;
+            opacity: 0.9;
+        }
+
+        /* Analog Saat Görseli */
+        .analog-clock-svg {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto 10px auto; 
+            fill: #111; 
+            stroke: #333;
+            stroke-width: 1;
+            border-radius: 50%;
+            background-color: #111;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8), 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Diğer kutu stilleri önceki koddan aynen alındı */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .box {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #333333;
+            text-align: left;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .box-title {
+            font-size: 0.9em;
+            color: #AAAAAA;
+            margin-bottom: 5px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+        }
+
+        .box-date {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #FF4500;
+            margin-bottom: 5px;
+        }
+
+        .box-days-ago {
+            font-size: 0.7em;
+            color: #777777;
+        }
+        
+        .duration-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .duration-item {
+            background-color: #080808;
+            border: 1px solid #1c1c1c;
+            padding: 8px 5px;
+            text-align: center;
+            flex-grow: 1;
+            border-radius: 3px;
+        }
+
+        .duration-value {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1;
+        }
+
+        .duration-label {
+            font-size: 0.6em;
+            color: #777777;
+            margin-top: 3px;
+            text-transform: uppercase;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+        }
+
+        /* Mobil Uyum */
+        @media (max-width: 700px) {
+            .grid-container { grid-template-columns: 1fr; gap: 15px; }
+            .heart-canvas { width: 100px; height: 100px; } /* Mobil için küçültme */
+            #digital-time { font-size: 3em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">ZAMANIN ÖTESİNDE</div>
+    <div class="subtitle">Anılarımız Sonsuzluğa Uzanaır</div>
+    
+    <svg class="analog-clock-svg" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" stroke="#333333" fill="#111111" stroke-width="2"/>
+        <line x1="50" y1="50" x2="45" y2="30" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="50" y1="50" x2="65" y2="40" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+        <line x1="50" y1="50" x2="40" y2="60" stroke="#FF0000" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="3" fill="#FF0000"/>
+    </svg>
+
+    <div class="time-and-hearts">
+        <canvas id="heartCanvasLeft" class="heart-canvas"></canvas>
+        <div id="digital-time">00:00:00</div>
+        <canvas id="heartCanvasRight" class="heart-canvas"></canvas>
+    </div>
+
+    <div id="date-info">PAZAR - 30 KASIM 2025</div> 
+
+    <div class="grid-container">
+        <div class="box">
+            <div class="box-title">📅 İLK TANIŞTIĞIMIZ GÜN</div>
+            <div id="tanisma-date-display" class="box-date">27 Mayıs 2025 00:00</div>
+            <div id="tanisma-days-ago" class="box-days-ago">...gün önce</div>
+        </div>
+        
+        <div class="box">
+            <div class="box-title">🖤 YENİDEN BİRLİKTE OLDUĞUMUZ GÜN</div>
+            <div id="sevgili-date-display" class="box-date">14 Kasım 2025 00:00</div>
+            <div id="sevgili-days-ago" class="box-days-ago">...gün önce</div>
+        </div>
+
+        <div class="box">
+            <div class="box-title">İLK TANIŞTIĞIMIZ GÜN - GEÇEN SÜRE</div>
+            <div id="tanisma-duration" class="duration-container"></div>
+        </div>
+
+        <div class="box">
+            <div class="box-title">YENİDEN BİRLİKTE OLDUĞUMUZ GÜN - GEÇEN SÜRE</div>
+            <div id="sevgili-duration" class="duration-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // TARİHLER
+        const tanismaTarihiStr = '2025-05-27T00:00:00'; 
+        const sevgiliTarihiStr = '2025-11-14T00:00:00'; 
+
+        const tanismaTarihi = new Date(tanismaTarihiStr);
+        const sevgiliTarihi = new Date(sevgiliTarihiStr);
+
+        // Kalp Animasyon Sayaçları ve Puanları
+        const heartState = {
+            left: { i: 0, points: [] },
+            right: { i: 0, points: [] }
+        };
+        const totalIterations = 2500;
+        const scale = 5; // Kalp boyutunu Canvas boyutuna göre optimize etmek için
+        
+        // Trigonometrik Kalp Fonksiyonları
+        function xt(t) { return 16 * Math.pow(Math.sin(t), 3); }
+        function yt(t) { return 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t); }
+
+        // Kalp Noktalarını Önceden Hesaplama
+        for (let idx = 0; idx < totalIterations; idx++) {
+            const t = idx * (2 * Math.PI / totalIterations) - Math.PI / 2; // -PI'dan PI'ya yakın döngü için t değeri
+            heartState.left.points.push({ x: xt(t) * scale, y: yt(t) * scale });
+            heartState.right.points.push({ x: xt(t) * scale, y: yt(t) * scale });
+        }
+
+        // Kalp Çizim Fonksiyonu (Radyal Dolum Efekti)
+        function drawHeart(canvasId, state) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Canvas boyutunu CSS boyutuna uydur ve sıfırla
+            const size = canvas.clientWidth;
+            canvas.width = size;
+            canvas.height = size;
+            ctx.clearRect(0, 0, size, size);
+            
+            // Merkezi orijin olarak ayarla
+            const centerX = size / 2;
+            const centerY = size / 2;
+
+            ctx.strokeStyle = '#FFFFFF'; // İstenen Beyaz Renk
+            ctx.lineWidth = 1.5;
+            
+            // Çizim
+            for (let i = 0; i <= state.i; i++) {
+                if (i >= state.points.length) break;
+
+                const point = state.points[i];
+                
+                // Merkezi (0,0) olan noktaları Canvas koordinatlarına çevir
+                const drawX = centerX + point.x * (size / 300); // Ek ölçeklendirme ile Canvas'a sığdır
+                const drawY = centerY - point.y * (size / 300); // Y ekseni ters çevrilir
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY); // Merkezden başla
+                ctx.lineTo(drawX, drawY);     // Kalp üzerindeki noktaya çiz
+                ctx.stroke();
+            }
+
+            // Animasyon adımını ilerlet
+            if (state.i < totalIterations) {
+                state.i += 25; // Hızlı dolum için adım atla
+            } else {
+                state.i = totalIterations; // Tamamlandı
+            }
+        }
+        
+        // --- Ana Güncelleme ve Animasyon Döngüsü ---
+        
+        const dateFormatter = new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        
+        document.getElementById('tanisma-date-display').innerText = dateFormatter.format(tanismaTarihi);
+        document.getElementById('sevgili-date-display').innerText = dateFormatter.format(sevgiliTarihi);
+
+        function renderDuration(durationElementId, days, hours, minutes, seconds) {
+            const container = document.getElementById(durationElementId);
+            container.innerHTML = `
+                <div class="duration-item"><div class="duration-value">${days}</div><div class="duration-label">GÜN</div></div>
+                <div class="duration-item"><div class="duration-value">${hours}</div><div class="duration-label">SAAT</div></div>
+                <div class="duration-item"><div class="duration-value">${minutes}</div><div class="duration-label">DAKİKA</div></div>
+                <div class="duration-item"><div class="duration-value">${seconds}</div><div class="duration-label">SANİYE</div></div>
+            `;
+        }
+
+        function calculateDuration(startDate, daysAgoId) {
+            const now = new Date();
+            const diffMs = now - startDate;
+            if (diffMs < 0) return { days: '000', hours: '00', minutes: '00', seconds: '00' };
+
+            const msInDay = 1000 * 60 * 60 * 24;
+            
+            const daysTotal = Math.floor(diffMs / msInDay);
+            document.getElementById(daysAgoId).innerText = `${daysTotal} gün önce`;
+
+            const days = String(daysTotal).padStart(3, '0');
+            const hours = String(Math.floor((diffMs % msInDay) / (1000 * 60 * 60))).padStart(2, '0');
+            const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            const seconds = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
+
+            return { days, hours, minutes, seconds };
+        }
+        
+        function updateAll() {
+            const now = new Date();
+
+            // Dijital Saat ve Gün Bilgisi Güncelleme
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const timeString = now.toLocaleTimeString('tr-TR', timeOptions);
+            document.getElementById('digital-time').innerText = timeString;
+
+            const dateOptions = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+            const dateInfo = now.toLocaleDateString('tr-TR', dateOptions).toUpperCase();
+            document.getElementById('date-info').innerText = dateInfo.replace(/,/g, ' -');
+
+            // Sayaç Güncelleme
+            const tanisma = calculateDuration(tanismaTarihi, 'tanisma-days-ago');
+            const sevgili = calculateDuration(sevgiliTarihi, 'sevgili-days-ago');
+            
+            renderDuration('tanisma-duration', tanisma.days, tanisma.hours, tanisma.minutes, tanisma.seconds);
+            renderDuration('sevgili-duration', sevgili.days, sevgili.hours, sevgili.minutes, sevgili.seconds);
+        }
+        
+        // Animasyon döngüsü (60 FPS)
+        function animate() {
+            drawHeart('heartCanvasLeft', heartState.left);
+            drawHeart('heartCanvasRight', heartState.right);
+            requestAnimationFrame(animate);
+        }
+
+        // Timer döngüsü (1 saniyede bir sayaç güncelleme)
+        setInterval(updateAll, 1000); 
+        
+        // İlk çizim ve animasyonu başlat
+        updateAll();
+        animate(); 
+        
+        // Ekran boyutu değişince güncellemeleri yap
+        window.addEventListener('resize', updateAll);
+
+    </script>
+
+</body>
+</html>
